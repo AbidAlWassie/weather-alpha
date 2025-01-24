@@ -1,3 +1,5 @@
+// src/app/[city]/page.tsx
+// import { notFound } from "next/navigation";
 import CurrentWeather from "../../components/layouts/CurrentWeather";
 import HourlyForecast from "../../components/layouts/HourlyForecast";
 import TemperatureChart from "../../components/layouts/TemperatureChart";
@@ -9,12 +11,10 @@ import {
   TabsTrigger,
 } from "../../components/ui/tabs";
 
-export default function CityWeather({ params }: { params: { city: string } }) {
+export default function CityWeather() {
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="mb-8 text-center text-4xl font-bold">
-        Weather for {params.city}
-      </h1>
+      <h1 className="mb-8 text-center text-4xl font-bold">Weather for</h1>
       <CurrentWeather />
       <Tabs defaultValue="weekly" className="mt-8">
         <TabsList className="grid w-full grid-cols-3">
