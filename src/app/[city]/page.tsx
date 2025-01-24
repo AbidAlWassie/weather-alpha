@@ -1,9 +1,9 @@
 // src/app/[city]/page.tsx
 // import { notFound } from "next/navigation";
-import CurrentWeather from "../../components/layouts/CurrentWeather";
-import HourlyForecast from "../../components/layouts/HourlyForecast";
-import TemperatureChart from "../../components/layouts/TemperatureChart";
-import WeeklyForecast from "../../components/layouts/WeeklyForecast";
+import CurrentWeather from "../../components/sections/CurrentWeather";
+import HourlyForecast from "../../components/sections/HourlyForecast";
+import TemperatureChart from "../../components/sections/TemperatureChart";
+import WeeklyForecast from "../../components/sections/WeeklyForecast";
 import {
   Tabs,
   TabsContent,
