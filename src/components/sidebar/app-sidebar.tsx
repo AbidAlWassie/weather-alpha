@@ -1,3 +1,4 @@
+// src/components/sidebar/app-sidebar.tsx
 "use client";
 
 import {
@@ -27,7 +28,7 @@ const data = {
   user: {
     name: "shadcn",
     email: "m@example.com",
-    avatar: "https://icons8.com/icon/kDoeg22e5jUY/male-user",
+    image: "https://icons8.com/icon/kDoeg22e5jUY/male-user",
   },
   brand: [
     {
@@ -78,7 +79,12 @@ const data = {
   ],
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({
+  session,
+  ...props
+}: React.ComponentProps<typeof Sidebar> & {
+  session: { user: { name: string; email: string; image: string } } | null;
+}) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -89,7 +95,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavLocations locations={data.locations} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={session?.user ?? null} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

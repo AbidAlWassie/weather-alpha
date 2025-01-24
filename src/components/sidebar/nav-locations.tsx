@@ -1,3 +1,4 @@
+// src/components/sidebar/nav-locations.tsx
 "use client";
 
 import {

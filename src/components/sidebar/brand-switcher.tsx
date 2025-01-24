@@ -1,3 +1,4 @@
+// src/components/sidebar/brand-switcher.tsx
 "use client";
 
 import * as React from "react";
