@@ -1,12 +1,14 @@
 /** @type {import("eslint").Linter.Config} */
+import typescript from '@typescript-eslint/eslint-plugin';
+
 const config = {
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "project": true
   },
-  "plugins": [
-    "@typescript-eslint"
-  ],
+  plugins: {
+    '@typescript-eslint': typescript,
+  },
   "extends": [
     "next/core-web-vitals",
     "plugin:@typescript-eslint/recommended-type-checked",
