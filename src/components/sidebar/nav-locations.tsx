@@ -28,10 +28,16 @@ type Location = {
   name: string;
   latitude: number;
   longitude: number;
+  url: string;
+  icon: React.ComponentType;
 };
 
-export function NavLocations() {
-  const [locations, setLocations] = useState<Location[]>([]);
+interface NavLocationsProps {
+  locations: Location[];
+}
+
+export function NavLocations({ locations: _locations }: NavLocationsProps) {
+  const [locationList, setLocationList] = useState<Location[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { isMobile } = useSidebar();
 
@@ -47,7 +53,13 @@ export function NavLocations() {
       const result = await getLocations();
       if (!result.success) throw new Error(result.error);
       if (result.data) {
-        setLocations(result.data);
+        setLocationList(
+          result.data.map((loc) => ({
+            ...loc,
+            url: `/location/${loc.id}`,
+            icon: Globe,
+          })),
+        );
       }
     } catch (error) {
       console.error("Error fetching locations:", error);
@@ -61,7 +73,7 @@ export function NavLocations() {
     try {
       const result = await deleteLocation(id);
       if (!result.success) throw new Error(result.error);
-      setLocations(locations.filter((loc) => loc.id !== id));
+      setLocationList(locationList.filter((loc) => loc.id !== id));
       toast.success("Location deleted successfully");
     } catch (error) {
       console.error("Error deleting location:", error);
@@ -82,7 +94,7 @@ export function NavLocations() {
           </SidebarMenuItem>
         ) : (
           <>
-            {locations.map((item) => (
+            {locationList.map((item) => (
               <SidebarMenuItem key={item.id}>
                 <SidebarMenuButton asChild>
                   <Link href={`/location/${item.id}`}>

@@ -1,11 +1,14 @@
 import { WeatherOverview } from "~/components/WeatherOverview";
 import { getLocation } from "~/server/actions/locations";
 
-export default async function LocationPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+type LocationPageProps = {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
+
+export default async function LocationPage(props: LocationPageProps) {
+  const params = await props.params;
+
   const result = await getLocation(params.id);
 
   if (!result.success) {
@@ -21,7 +24,7 @@ export default async function LocationPage({
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="mb-4 text-4xl font-bold">{location.name}</h1>
-      <WeatherOverview weather={weather} />
+      <WeatherOverview weather={weather ?? null} />
     </div>
   );
 }

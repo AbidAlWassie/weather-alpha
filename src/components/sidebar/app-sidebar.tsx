@@ -62,19 +62,28 @@ const data = {
   ],
   locations: [
     {
+      id: "1",
       name: "Rangpur, Bangladesh",
       url: "#",
       icon: Globe,
+      latitude: 25.7439,
+      longitude: 89.2752,
     },
     {
+      id: "2",
       name: "Damascus, Syria",
       url: "#",
       icon: Globe,
+      latitude: 33.5138,
+      longitude: 36.2765,
     },
     {
+      id: "3",
       name: "Austin TX, USA",
       url: "#",
       icon: Globe,
+      latitude: 30.2672,
+      longitude: -97.7431,
     },
   ],
 };

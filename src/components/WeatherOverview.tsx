@@ -1,8 +1,9 @@
+// src/components/WeatherOverview.tsx
 import { Cloud, Sun, Thermometer } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import type { WeatherData } from "~/server/actions/locations";
 
-export function WeatherOverview({ weather }: { weather: WeatherData | null }) {
+export function WeatherOverview({ weather }: { weather?: WeatherData | null }) {
   if (!weather) {
     return (
       <Card className="bg-card text-card-foreground">
