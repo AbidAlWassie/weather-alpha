@@ -1,20 +1,15 @@
 // src/components/sidebar/nav-locations.tsx
 "use client";
 
-import {
-  CirclePlus,
-  Folder,
-  Forward,
-  MoreHorizontal,
-  Trash2,
-  type LucideIcon,
-} from "lucide-react";
-
+import { Globe, MoreHorizontal, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { deleteLocation, getLocations } from "~/server/actions/locations";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import {
@@ -26,65 +21,102 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "../ui/sidebar";
+import { AddLocation } from "./add-location";
 
-export function NavLocations({
-  locations,
-}: {
-  locations: {
-    name: string;
-    url: string;
-    icon: LucideIcon;
-  }[];
-}) {
+type Location = {
+  id: string;
+  name: string;
+  latitude: number;
+  longitude: number;
+};
+
+export function NavLocations() {
+  const [locations, setLocations] = useState<Location[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { isMobile } = useSidebar();
 
+  useEffect(() => {
+    const fetchData = async () => {
+      await fetchLocations();
+    };
+    void fetchData();
+  }, []);
+
+  const fetchLocations = async () => {
+    try {
+      const result = await getLocations();
+      if (!result.success) throw new Error(result.error);
+      if (result.data) {
+        setLocations(result.data);
+      }
+    } catch (error) {
+      console.error("Error fetching locations:", error);
+      toast.error("Failed to load locations");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeleteLocation = async (id: string) => {
+    try {
+      const result = await deleteLocation(id);
+      if (!result.success) throw new Error(result.error);
+      setLocations(locations.filter((loc) => loc.id !== id));
+      toast.success("Location deleted successfully");
+    } catch (error) {
+      console.error("Error deleting location:", error);
+      toast.error("Failed to delete location");
+    }
+  };
+
   return (
-    <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+    <SidebarGroup>
       <SidebarGroupLabel>Locations</SidebarGroupLabel>
       <SidebarMenu>
-        {locations.map((item) => (
-          <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton asChild>
-              <a href={item.url}>
-                <item.icon />
-                <span>{item.name}</span>
-              </a>
-            </SidebarMenuButton>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuAction showOnHover>
-                  <MoreHorizontal />
-                  <span className="sr-only">More</span>
-                </SidebarMenuAction>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="w-48 rounded-lg"
-                side={isMobile ? "bottom" : "right"}
-                align={isMobile ? "end" : "start"}
-              >
-                <DropdownMenuItem>
-                  <Folder className="text-muted-foreground" />
-                  <span>View Project</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Forward className="text-muted-foreground" />
-                  <span>Share Project</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Trash2 className="text-muted-foreground" />
-                  <span>Delete Project</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+        {isLoading ? (
+          <SidebarMenuItem>
+            <div className="flex items-center space-x-2">
+              <Globe className="animate-spin" />
+              <span>Loading locations...</span>
+            </div>
           </SidebarMenuItem>
-        ))}
-        <SidebarMenuItem>
-          <SidebarMenuButton className="text-sidebar-foreground/70">
-            <CirclePlus className="text-sidebar-foreground/70" />
-            <span>Add More</span>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
+        ) : (
+          <>
+            {locations.map((item) => (
+              <SidebarMenuItem key={item.id}>
+                <SidebarMenuButton asChild>
+                  <Link href={`/location/${item.id}`}>
+                    <Globe className="mr-2" />
+                    <span>{item.name}</span>
+                  </Link>
+                </SidebarMenuButton>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <SidebarMenuAction showOnHover>
+                      <MoreHorizontal />
+                      <span className="sr-only">More</span>
+                    </SidebarMenuAction>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    className="w-48"
+                    side={isMobile ? "bottom" : "right"}
+                    align={isMobile ? "end" : "start"}
+                  >
+                    <DropdownMenuItem
+                      onSelect={() => handleDeleteLocation(item.id)}
+                    >
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      <span>Delete Location</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </SidebarMenuItem>
+            ))}
+            <SidebarMenuItem>
+              <AddLocation onAddLocation={fetchLocations} />
+            </SidebarMenuItem>
+          </>
+        )}
       </SidebarMenu>
     </SidebarGroup>
   );

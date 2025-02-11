@@ -63,6 +63,7 @@ model User {
     accounts      Account[]
     sessions      Session[]
     posts         Post[]
+    locations     Location[]
 }
 
 model VerificationToken {
@@ -71,4 +72,19 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+
+model Location {
+    id        String   @id @default(cuid())
+    name      String
+    latitude  Float
+    longitude Float
+    userId    String
+    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@unique([userId, name])
+    @@index([userId])
 }
